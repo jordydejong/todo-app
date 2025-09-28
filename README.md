@@ -84,6 +84,59 @@ docker build -t todo-app .
 docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://your-api:8080 todo-app
 ```
 
+### GitHub Container Registry
+
+This app includes a GitHub Actions workflow that automatically builds and publishes Docker images to GitHub Container Registry (ghcr.io).
+
+#### Automatic Builds
+
+Images are automatically built and pushed when:
+- Code is pushed to the `main` or `master` branch
+- Manually triggered via GitHub Actions UI
+- Pull requests are created (build only, no push)
+
+#### Published Images
+
+Images are available at:
+```
+ghcr.io/YOUR_GITHUB_USERNAME/todo-app:TAG
+```
+
+Available tags:
+- `latest` - Latest build from main branch
+- `main` / `master` - Branch-specific tags
+- `YYYYMMDD-HHmmss` - Timestamp tags
+- `sha-xxxxxx` - Commit SHA tags
+- Custom tags when manually triggered
+
+#### Using Published Images
+
+1. Pull the image:
+```bash
+docker pull ghcr.io/YOUR_GITHUB_USERNAME/todo-app:latest
+```
+
+2. Run the container:
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -e NEXT_PUBLIC_API_URL=http://your-api:8080 \
+  ghcr.io/YOUR_GITHUB_USERNAME/todo-app:latest
+```
+
+#### Manual Workflow Trigger
+
+You can manually trigger the workflow from the Actions tab with:
+- Custom image tag
+- Platform selection (amd64, arm64, or both)
+
+#### Security Scanning
+
+The workflow includes:
+- Trivy vulnerability scanning
+- Results uploaded to GitHub Security tab
+- Multi-platform builds (linux/amd64, linux/arm64)
+
 ## Project Structure
 
 ```
